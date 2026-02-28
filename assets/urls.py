@@ -6,7 +6,8 @@ from .views import (
     AssetUpdateView,
     AssetDeleteView,
     MaintenanceCreateView,
-    SignUpView, 
+    SignUpView,
+    export_assets_csv,
 )
 
 urlpatterns = [
@@ -16,5 +17,6 @@ urlpatterns = [
     path('update/<int:pk>/', AssetUpdateView.as_view(), name='asset-update'),
     path('delete/<int:pk>/', AssetDeleteView.as_view(), name='asset-delete'),
     path('asset/<int:pk>/maintain/', MaintenanceCreateView.as_view(), name='asset-maintain'),
+    path('export/csv/', export_assets_csv, name='export-csv'),
     path('register/', SignUpView.as_view(), name='register'),
 ]

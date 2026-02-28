@@ -2,6 +2,10 @@
 
 {% block content %}
     <h1>Corporate Assets</h1>
+
+    <!-- Export to CSV button -->
+    <a href="{% url 'export-csv' %}" class="btn btn-success mb-3">Export to CSV</a>
+
     <table class="table">
         <thead>
             <tr>
@@ -33,9 +37,9 @@
                 <td>{{ asset.created_at|date:"M d, Y" }}</td>
                 <td>
                     {% if user.is_manager or user.is_superuser %}
-                        <a href="{% url 'asset-update' asset.pk %}" class="btn btn-info">Edit</a>
-                        <a href="{% url 'asset-delete' asset.pk %}" class="btn btn-danger">Delete</a>
-                        <a href="{% url 'asset-maintain' asset.pk %}" class="btn btn-warning">🛠️ Log Repair</a>
+                        <a href="{% url 'asset-update' asset.pk %}" class="btn btn-info btn-sm">Edit</a>
+                        <a href="{% url 'asset-delete' asset.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                        <a href="{% url 'asset-maintain' asset.pk %}" class="btn btn-warning btn-sm">Add Repair Log</a>
                     {% else %}
                         <span class="text-secondary">View Only</span>
                     {% endif %}
@@ -44,4 +48,55 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Bootstrap Pagination Controls -->
+    {% if is_paginated %}
+    <nav aria-label="Asset list pagination">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo; First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo; First</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Last &raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 {% endblock %}

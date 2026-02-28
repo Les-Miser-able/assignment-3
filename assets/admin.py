@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import User, Asset, Department
+from .models import User, Asset, Department, MaintenanceLog
 
 
 @admin.register(User)
@@ -23,3 +23,8 @@ class DepartmentAdmin(admin.ModelAdmin):
 @admin.register(Asset)
 class AssetAdmin(admin.ModelAdmin):
 	list_display = ("name", "asset_type", "cost", "repair_cost", "assigned_to", "created_at")
+
+
+@admin.register(MaintenanceLog)
+class MaintenanceLogAdmin(admin.ModelAdmin):
+	list_display = ("asset", "date_repaired", "description", "cost")

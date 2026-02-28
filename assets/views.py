@@ -1,4 +1,8 @@
+import csv
+
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.views.generic import ListView, TemplateView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy, reverse
 from django.db.models import Sum, Count, F, Q
@@ -38,6 +42,7 @@ class AssetListView(LoginRequiredMixin, ListView):
     model = Asset
     template_name = "assets/asset_list.html"
     context_object_name = "assets"
+    paginate_by = 5
 
     def get_queryset(self):
         # Optimization: Use select_related to fetch the 'assigned_to' User 
@@ -90,6 +95,27 @@ class MaintenanceCreateView(ManagerRequiredMixin, CreateView):
 
     def get_success_url(self):
         return self.success_url
+
+# ── Part 3: CSV Export ──────────────────────────────────────────────
+@login_required
+def export_assets_csv(request):
+    """Generate and download a CSV report of all assets."""
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="asset_report.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Asset Name', 'Type', 'Cost', 'Assigned User'])
+
+    for asset in Asset.objects.select_related('assigned_to').all():
+        writer.writerow([
+            asset.name,
+            asset.get_asset_type_display(),
+            asset.cost,
+            asset.assigned_to.username if asset.assigned_to else 'Unassigned',
+        ])
+
+    return response
+
 
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
