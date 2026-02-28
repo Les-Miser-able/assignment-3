@@ -1,0 +1,14 @@
+{% extends "assets/base.html" %}
+
+{% block content %}
+    <h1 class="text-danger">Confirm Deletion</h1>
+    <p>Are you sure you want to delete the asset: <strong>{{ object.name }}?</strong></p>
+    <p><em>This action cannot be undone.</em></p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'asset-list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

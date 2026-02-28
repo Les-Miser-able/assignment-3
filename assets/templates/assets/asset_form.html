@@ -1,0 +1,21 @@
+{% extends "assets/base.html" %}
+
+{% block content %}
+    <h1>{% if action == 'Edit' %}
+            Edit Asset
+            {% elif action == 'Create' %}
+                Create New Asset
+            {% else %}
+                Log Repair
+            {% endif %}
+    </h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if action == 'Edit' %}
+            <button type="submit" class="btn btn-success">Update Asset</button>
+        {% else %}
+            <button type="submit" class="btn btn-primary">Save Asset</button>
+        {% endif %}
+    </form>
+{% endblock %}

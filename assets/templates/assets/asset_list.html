@@ -1,0 +1,47 @@
+{% extends "assets/base.html" %}
+
+{% block content %}
+    <h1>Corporate Assets</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Asset Name</th>
+                <th>Type</th>
+                <th>Cost</th>
+                <th>Repair Costs</th>
+                <th>Assigned To</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asset in assets %}
+            <tr>
+                <td>{{ asset.name }}</td>
+                <td>{{ asset.get_asset_type_display }}</td>
+                <td>${{ asset.cost }}</td>
+                <td>
+                    ${{ asset.repair_total|default_if_none:"0.00" }}
+                </td>
+                <td>
+                    {% if asset.assigned_to %}
+                        {{ asset.assigned_to.username }}
+                    {% else %}
+                        <span class="text-danger">Unassigned</span>
+                    {% endif %}
+                </td>
+                <td>{{ asset.created_at|date:"M d, Y" }}</td>
+                <td>
+                    {% if user.is_manager or user.is_superuser %}
+                        <a href="{% url 'asset-update' asset.pk %}" class="btn btn-info">Edit</a>
+                        <a href="{% url 'asset-delete' asset.pk %}" class="btn btn-danger">Delete</a>
+                        <a href="{% url 'asset-maintain' asset.pk %}" class="btn btn-warning">🛠️ Log Repair</a>
+                    {% else %}
+                        <span class="text-secondary">View Only</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
